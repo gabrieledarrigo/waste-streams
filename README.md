@@ -1,2 +1,2 @@
-# waste-stream
-Waste Stream API
+# Waste Streams API
+Waste Streams API
