@@ -1,0 +1,13 @@
+services:
+  mongo:
+    image: mongo
+    container_name: waste-streams-mongodb
+    restart: always
+    ports:
+      - '27017:27017'
+    volumes:
+      - './data:/docker-entrypoint-initdb.d'
+    environment:
+      MONGO_INITDB_DATABASE: wasteStreams
+      MONGO_INITDB_ROOT_USERNAME: user
+      MONGO_INITDB_ROOT_PASSWORD: password
