@@ -52,9 +52,7 @@ describe('LogisticProvidersService', () => {
     }).compile();
 
     service = module.get<LogisticProvidersService>(LogisticProvidersService);
-    model = module.get<Model<LogisticProvider>>(
-      getModelToken('LogisticProvider'),
-    );
+    model = module.get<Model<LogisticProvider>>(getModelToken('LogisticProvider'));
   });
 
   afterEach(() => {

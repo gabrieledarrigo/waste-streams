@@ -35,5 +35,4 @@ export class LogisticProvider {
   _modified: Date;
 }
 
-export const LogisticProviderSchema =
-  SchemaFactory.createForClass(LogisticProvider);
+export const LogisticProviderSchema = SchemaFactory.createForClass(LogisticProvider);
