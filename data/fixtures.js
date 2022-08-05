@@ -2850,8 +2850,7 @@ db.logisticProviders.save([
     supportedStreams: [2, 3],
     supportedContainers: [4, 5, 6, 7],
     area: [1500, 2000],
-    pickUpDays: ['monday', 'tuesday', 'thursday', 'friday'],
-    timeslots: [
+    pickUpSlots: [
       {
         day: 'monday',
         hours: ['10:00', '12:00'],
@@ -2877,8 +2876,7 @@ db.logisticProviders.save([
     supportedStreams: [1, 4, 5, 6],
     supportedContainers: [1, 4, 5, 6, 7],
     area: [1000, 1499],
-    pickUpDays: ['monday', 'tuesday', 'wednesday', 'thursday'],
-    timeslots: [
+    pickUpSlots: [
       {
         day: 'monday',
         hours: ['10:00', '12:00'],
@@ -2904,8 +2902,7 @@ db.logisticProviders.save([
     supportedStreams: [6, 7, 9, 10],
     supportedContainers: [1, 2, 3],
     area: [1000, 1099],
-    pickUpDays: ['monday', 'wednesday', 'friday#2'],
-    timeslots: [
+    pickUpSlots: [
       {
         day: 'monday',
         hours: ['10:00', '12:00'],
