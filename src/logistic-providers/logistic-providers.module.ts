@@ -15,6 +15,6 @@ import { LogisticProvider, LogisticProviderSchema } from './schema/logistic-prov
   ],
   controllers: [LogisticProvidersController],
   providers: [LogisticProvidersService],
-  exports: [LogisticProvider],
+  exports: [MongooseModule],
 })
 export class LogisticProvidersModule {}
