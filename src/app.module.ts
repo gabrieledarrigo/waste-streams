@@ -15,7 +15,7 @@ import database from './config/database';
       inject: [ConfigService],
       useFactory: async (config: ConfigService) => ({
         uri: config.get<string>('mongodb.uri'),
-      })
+      }),
     }),
     StreamsModule,
     LogisticProvidersModule,

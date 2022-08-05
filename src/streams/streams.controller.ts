@@ -1,12 +1,13 @@
 import { Controller, Get } from '@nestjs/common';
+import { Stream } from './schema/stream.schema';
+import { StreamsService } from './streams.service';
 
 @Controller('streams')
 export class StreamsController {
-  // eslint-disable-next-line class-methods-use-this
+  constructor(private streamsService: StreamsService) {}
+
   @Get()
-  async getAll() {
-    return {
-      hello: 'World',
-    };
+  async findAll(): Promise<Stream[]> {
+   return  this.streamsService.findAll();
   }
 }
