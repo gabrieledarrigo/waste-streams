@@ -1,8 +1,13 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document  } from 'mongoose';
+import { LogisticProviderDocument } from '../../logistic-providers/schema/logistic-providers.schema';
 import { Size } from './size.schema';
 
 export type StreamDocument = Stream & Document;
+
+export type StreamAggregate = StreamDocument & {
+  logisticProviders: LogisticProviderDocument[],
+}
 
 @Schema({ collection: 'streams' })
 export class Stream {

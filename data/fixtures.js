@@ -2912,7 +2912,7 @@ db.logisticProviders.save([
         hours: ['18:00', '20:00'],
       },
       {
-        day: 'friday#2',
+        day: 'friday-2nd',
         hours: ['10:00', '12:00'],
       },
     ],
