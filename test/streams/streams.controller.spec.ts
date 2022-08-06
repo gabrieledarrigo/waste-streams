@@ -22,8 +22,7 @@ const stream: Stream = {
     {
       id: 18,
       size: 1000,
-      image:
-        'https://d39t4x71zbx2q8.cloudfront.net/containers/Seenons-Piepschuim.png',
+      image: 'https://d39t4x71zbx2q8.cloudfront.net/containers/Seenons-Piepschuim.png',
       sizeDisplay: '1m3',
       containerProductId: 32,
       discountPercentage: 0,
@@ -42,7 +41,7 @@ const streamWithPickUps: StreamWithPickUps = {
   _id: '62ee48f34dd6ed8201a17592',
   pickUpSlots: [
     {
-      logisticProviderId:  '62ee48f34dd6ed8201a175c7',
+      logisticProviderId: '62ee48f34dd6ed8201a175c7',
       logisticProvider: 'GreenCollect',
       area: [1000, 1099],
       day: 'monday',

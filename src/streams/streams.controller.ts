@@ -5,7 +5,7 @@ import { StreamsService } from './streams.service';
 
 @Controller('streams')
 export class StreamsController {
-  constructor(private streamsService: StreamsService) { }
+  constructor(private streamsService: StreamsService) {}
 
   @Get()
   async findAll(): Promise<Stream[]> {

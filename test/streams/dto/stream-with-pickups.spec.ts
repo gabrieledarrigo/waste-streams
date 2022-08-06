@@ -1,7 +1,7 @@
 /* eslint-disable no-underscore-dangle */
-import { LogisticProviderDocument } from "../../../src/logistic-providers/schema/logistic-providers.schema";
-import { StreamWithPickUps } from "../../../src/streams/dto/stream-with-pickups";
-import { StreamAggregate } from "../../../src/streams/schema/stream.schema";
+import { LogisticProviderDocument } from '../../../src/logistic-providers/schema/logistic-providers.schema';
+import { StreamWithPickUps } from '../../../src/streams/dto/stream-with-pickups';
+import { StreamAggregate } from '../../../src/streams/schema/stream.schema';
 
 describe('StreamWithPickUps', () => {
   describe('from', () => {
@@ -24,8 +24,7 @@ describe('StreamWithPickUps', () => {
           {
             id: 18,
             size: 1000,
-            image:
-              'https://d39t4x71zbx2q8.cloudfront.net/containers/Seenons-Piepschuim.png',
+            image: 'https://d39t4x71zbx2q8.cloudfront.net/containers/Seenons-Piepschuim.png',
             sizeDisplay: '1m3',
             containerProductId: 32,
             discountPercentage: 0,
@@ -69,7 +68,7 @@ describe('StreamWithPickUps', () => {
         image: aggregate.image,
         detailsURL: aggregate.detailsURL,
         textColor: aggregate.textColor,
-        backgroundColor:aggregate.backgroundColor,
+        backgroundColor: aggregate.backgroundColor,
         name: aggregate.name,
         description: aggregate.description,
         sizes: aggregate.sizes,
@@ -92,7 +91,7 @@ describe('StreamWithPickUps', () => {
         _active: aggregate._active,
         _created: aggregate._created,
         _modified: aggregate._modified,
-      })
+      });
     });
-  })
+  });
 });

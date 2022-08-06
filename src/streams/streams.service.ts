@@ -9,27 +9,26 @@ export class StreamsService {
   constructor(
     @InjectModel(Stream.name)
     private stream: Model<StreamDocument>,
-  ) { }
+  ) {}
 
   async findAll(): Promise<Stream[]> {
     return this.stream.find().exec();
   }
 
   async pickUps(postalcode?: number, weekdays?: string[]): Promise<StreamWithPickUps[]> {
-    const query = this.stream.aggregate()
-      .lookup({
-        from: 'logisticProviders',
-        localField: 'streamProductId',
-        foreignField: 'supportedStreams',
-        as: 'logisticProviders'
-      });
+    const query = this.stream.aggregate().lookup({
+      from: 'logisticProviders',
+      localField: 'streamProductId',
+      foreignField: 'supportedStreams',
+      as: 'logisticProviders',
+    });
 
     if (postalcode) {
       query.match({
         $and: [
           { 'logisticProviders.area.0': { $lte: postalcode } },
           { 'logisticProviders.area.1': { $gte: postalcode } },
-        ]
+        ],
       });
     }
 
@@ -41,8 +40,6 @@ export class StreamsService {
       });
     }
 
-    const results = (await query.exec()) as StreamAggregate[];
-
-    return results.map((aggregate) => StreamWithPickUps.from(aggregate));
+    return ((await query.exec()) as StreamAggregate[]).map((aggregate) => StreamWithPickUps.from(aggregate));
   }
 }
