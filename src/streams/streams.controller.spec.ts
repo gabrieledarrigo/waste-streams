@@ -1,9 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { PickUpQuery } from '../../src/streams/dto/pickup-query';
-import { StreamWithPickUps } from '../../src/streams/dto/stream-with-pickups';
-import { Stream } from '../../src/streams/schema/stream.schema';
-import { StreamsController } from '../../src/streams/streams.controller';
-import { StreamsService } from '../../src/streams/streams.service';
+import { PickUpQuery, StreamWithPickUps } from './dto';
+import { Stream } from './schema/stream.schema';
+import { StreamsController } from './streams.controller';
+import { StreamsService } from './streams.service';
 
 const stream: Stream = {
   type: 'piepschuim',

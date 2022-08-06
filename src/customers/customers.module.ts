@@ -14,6 +14,6 @@ import { Customer, CustomerSchema } from './schema/customer.schema';
     ]),
   ],
   providers: [CustomersService],
-  controllers: [CustomersController]
+  controllers: [CustomersController],
 })
 export class CustomersModule {}

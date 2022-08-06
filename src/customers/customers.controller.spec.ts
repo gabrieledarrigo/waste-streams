@@ -12,7 +12,6 @@ const customer = {
   _modified: new Date(),
 } as any as Customer;
 
-
 describe('CustomersController', () => {
   let controller: CustomersController;
   let service: CustomersService;
@@ -20,12 +19,14 @@ describe('CustomersController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [CustomersController],
-      providers: [{
-        provide: CustomersService,
-        useValue: {
-          findAll: jest.fn().mockResolvedValue([customer]),
+      providers: [
+        {
+          provide: CustomersService,
+          useValue: {
+            findAll: jest.fn().mockResolvedValue([customer]),
+          },
         },
-      }]
+      ],
     }).compile();
 
     controller = module.get<CustomersController>(CustomersController);

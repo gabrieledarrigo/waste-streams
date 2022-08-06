@@ -1,5 +1,5 @@
 import { Controller, Get, Query } from '@nestjs/common';
-import { PickUpQuery } from './dto/pickup-query';
+import { PickUpQuery } from './dto';
 import { Stream } from './schema/stream.schema';
 import { StreamsService } from './streams.service';
 

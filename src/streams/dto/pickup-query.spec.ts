@@ -1,5 +1,5 @@
 import { validateSync, ValidationError } from 'class-validator';
-import { PickUpQuery } from '../../../src/streams/dto/pickup-query';
+import { PickUpQuery } from './pickup-query';
 
 const isValid = (errors: ValidationError[]) => errors.length === 0;
 

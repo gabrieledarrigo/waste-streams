@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { LogisticProvidersController } from '../../src/logistic-providers/logistic-providers.controller';
-import { LogisticProvidersService } from '../../src/logistic-providers/logistic-providers.service';
-import { LogisticProvider } from '../../src/logistic-providers/schema/logistic-providers.schema';
+import { LogisticProvidersController } from './logistic-providers.controller';
+import { LogisticProvidersService } from './logistic-providers.service';
+import { LogisticProvider } from './schema/logistic-providers.schema';
 
 const logisticProvider: LogisticProvider = {
   name: 'Retransport',

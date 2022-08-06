@@ -1,15 +1,13 @@
 import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Model } from 'mongoose';
-import {
-  LogisticProvider,
-  LogisticProviderAggregate,
-} from '../../src/logistic-providers/schema/logistic-providers.schema';
-import { StreamWithPickUps } from '../../src/streams/dto/stream-with-pickups';
-import { Stream } from '../../src/streams/schema/stream.schema';
-import { StreamsService } from '../../src/streams/streams.service';
+import { LogisticProviderAggregate, LogisticProvider } from '../logistic-providers/schema/logistic-providers.schema';
+import { StreamWithPickUps } from './dto/stream-with-pickups';
+import { Stream } from './schema/stream.schema';
+import { StreamsService } from './streams.service';
 
-const stream: Stream = {
+const stream = {
+  _id: '62ee48f34dd6ed8201a17592',
   type: 'piepschuim',
   streamProductId: 11,
   image: 'https://d39t4x71zbx2q8.cloudfront.net/streams/v2/PIEPSCHUIM.png',
@@ -38,7 +36,7 @@ const stream: Stream = {
   _active: true,
   _created: new Date('2020-07-30T09:28:34.876Z'),
   _modified: new Date('2022-07-22T13:56:43.161Z'),
-};
+} as any as Stream;
 
 const logisticProviderAggregate = {
   _id: '62ee48f34dd6ed8201a175c7',
@@ -109,14 +107,14 @@ describe('StreamsService', () => {
       providers: [
         StreamsService,
         {
-          provide: getModelToken('Stream'),
+          provide: getModelToken(Stream.name),
           useValue: {
             find: jest.fn(),
             exec: jest.fn(),
           },
         },
         {
-          provide: getModelToken('LogisticProvider'),
+          provide: getModelToken(LogisticProvider.name),
           useValue: {
             aggregate: jest.fn().mockReturnValue(aggregateQuery),
             exec: jest.fn(),
@@ -126,8 +124,8 @@ describe('StreamsService', () => {
     }).compile();
 
     service = module.get<StreamsService>(StreamsService);
-    streamModel = module.get<Model<Stream>>(getModelToken('Stream'));
-    logisticProviderModel = module.get<Model<LogisticProvider>>(getModelToken('LogisticProvider'));
+    streamModel = module.get<Model<Stream>>(getModelToken(Stream.name));
+    logisticProviderModel = module.get<Model<LogisticProvider>>(getModelToken(LogisticProvider.name));
   });
 
   afterEach(() => {

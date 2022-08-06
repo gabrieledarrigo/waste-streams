@@ -1,8 +1,8 @@
 import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Model } from 'mongoose';
-import { LogisticProvidersService } from '../../src/logistic-providers/logistic-providers.service';
-import { LogisticProvider } from '../../src/logistic-providers/schema/logistic-providers.schema';
+import { LogisticProvidersService } from './logistic-providers.service';
+import { LogisticProvider } from './schema/logistic-providers.schema';
 
 const logisticProvider: LogisticProvider = {
   name: 'Retransport',
@@ -40,7 +40,7 @@ describe('LogisticProvidersService', () => {
       providers: [
         LogisticProvidersService,
         {
-          provide: getModelToken('LogisticProvider'),
+          provide: getModelToken(LogisticProvider.name),
           useValue: {
             new: jest.fn().mockResolvedValue(logisticProvider),
             constructor: jest.fn().mockResolvedValue(logisticProvider),
@@ -52,7 +52,7 @@ describe('LogisticProvidersService', () => {
     }).compile();
 
     service = module.get<LogisticProvidersService>(LogisticProvidersService);
-    model = module.get<Model<LogisticProvider>>(getModelToken('LogisticProvider'));
+    model = module.get<Model<LogisticProvider>>(getModelToken(LogisticProvider.name));
   });
 
   afterEach(() => {
