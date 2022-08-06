@@ -1,7 +1,12 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
+import { StreamDocument } from '../../streams/schema/stream.schema';
 
 export type LogisticProviderDocument = LogisticProvider & Document;
+
+export type LogisticProviderAggregate = LogisticProviderDocument & {
+  stream: StreamDocument;
+};
 
 export type Area = [number, number];
 

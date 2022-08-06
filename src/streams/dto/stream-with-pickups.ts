@@ -1,7 +1,5 @@
-/* eslint-disable no-underscore-dangle */
-/* eslint-disable arrow-body-style */
-import { Hours } from '../../logistic-providers/schema/logistic-providers.schema';
-import { Stream, StreamAggregate } from '../schema/stream.schema';
+import { Hours, LogisticProviderAggregate } from '../../logistic-providers/schema/logistic-providers.schema';
+import { Stream } from '../schema/stream.schema';
 
 export class StreamWithPickUps extends Stream {
   _id: string;
@@ -14,35 +12,48 @@ export class StreamWithPickUps extends Stream {
     hours: Hours;
   }[];
 
-  static from(aggregate: StreamAggregate): StreamWithPickUps {
-    const slots = aggregate.logisticProviders
-      .map(({ _id, name, area, pickUpSlots }) => {
-        return pickUpSlots.map(({ day, hours }) => ({
-          logisticProviderId: _id,
-          logisticProvider: name,
-          area,
-          day,
-          hours,
-        }));
-      })
-      .flat();
+  static fromAggregate(aggregate: LogisticProviderAggregate): StreamWithPickUps {
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    const { _id, name, area, pickUpSlots, stream } = aggregate;
 
     const streamWithPickUps = new StreamWithPickUps();
-    streamWithPickUps._id = aggregate._id!;
-    streamWithPickUps.type = aggregate.type;
-    streamWithPickUps.streamProductId = aggregate.streamProductId;
-    streamWithPickUps.image = aggregate.image;
-    streamWithPickUps.detailsURL = aggregate.detailsURL;
-    streamWithPickUps.textColor = aggregate.textColor;
-    streamWithPickUps.backgroundColor = aggregate.backgroundColor;
-    streamWithPickUps.name = aggregate.name;
-    streamWithPickUps.description = aggregate.description;
-    streamWithPickUps.sizes = aggregate.sizes;
-    streamWithPickUps.pickUpSlots = slots;
-    streamWithPickUps._active = aggregate._active;
-    streamWithPickUps._created = aggregate._created;
-    streamWithPickUps._modified = aggregate._modified;
+    streamWithPickUps._id = stream._id!;
+    streamWithPickUps.type = stream.type;
+    streamWithPickUps.streamProductId = stream.streamProductId;
+    streamWithPickUps.image = stream.image;
+    streamWithPickUps.detailsURL = stream.detailsURL;
+    streamWithPickUps.textColor = stream.textColor;
+    streamWithPickUps.backgroundColor = stream.backgroundColor;
+    streamWithPickUps.name = stream.name;
+    streamWithPickUps.description = stream.description;
+    streamWithPickUps.sizes = stream.sizes;
+    streamWithPickUps.pickUpSlots = pickUpSlots.map((slot) => ({
+      logisticProviderId: _id,
+      logisticProvider: name,
+      area,
+      ...slot,
+    }));
+    streamWithPickUps._active = stream._active;
+    streamWithPickUps._created = stream._created;
+    streamWithPickUps._modified = stream._modified;
 
     return streamWithPickUps;
+  }
+
+  static fromAggregates(aggregates: LogisticProviderAggregate[]): StreamWithPickUps[] {
+    const mapped = aggregates.reduce((acc, aggregate) => {
+      const streamWithPickUps = StreamWithPickUps.fromAggregate(aggregate);
+      const streamId = streamWithPickUps._id;
+
+      if (acc[streamId]) {
+        acc[streamId].pickUpSlots.push(...streamWithPickUps.pickUpSlots);
+      } else {
+        acc[streamId] = streamWithPickUps;
+      }
+
+      return acc;
+    }, {} as { [key: string]: StreamWithPickUps });
+
+    return Object.values(mapped);
   }
 }

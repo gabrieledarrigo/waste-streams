@@ -14,6 +14,6 @@ export class StreamsController {
 
   @Get('pickups')
   async pickUps(@Query() query: PickUpQuery): Promise<any> {
-    return this.streamsService.pickUps(query.postalcode, query.weekdays);
+    return this.streamsService.availableForPickUp(query.postalcode, query.weekdays);
   }
 }

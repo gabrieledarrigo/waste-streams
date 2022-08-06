@@ -1,9 +1,12 @@
 import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Model } from 'mongoose';
-import { LogisticProviderDocument } from '../../src/logistic-providers/schema/logistic-providers.schema';
+import {
+  LogisticProvider,
+  LogisticProviderAggregate,
+} from '../../src/logistic-providers/schema/logistic-providers.schema';
 import { StreamWithPickUps } from '../../src/streams/dto/stream-with-pickups';
-import { Stream, StreamAggregate } from '../../src/streams/schema/stream.schema';
+import { Stream } from '../../src/streams/schema/stream.schema';
 import { StreamsService } from '../../src/streams/streams.service';
 
 const stream: Stream = {
@@ -37,31 +40,29 @@ const stream: Stream = {
   _modified: new Date('2022-07-22T13:56:43.161Z'),
 };
 
-const streamAggregate = {
-  ...stream,
-  _id: '62ee48f34dd6ed8201a17592',
-  logisticProviders: [
+const logisticProviderAggregate = {
+  _id: '62ee48f34dd6ed8201a175c7',
+  name: 'GreenCollect',
+  supportedStreams: [6, 7, 9, 10],
+  supportedContainers: [1, 2, 3],
+  area: [1000, 1099],
+  pickUpSlots: [
     {
-      _id: '62ee48f34dd6ed8201a175c7',
-      name: 'GreenCollect',
-      supportedStreams: [6, 7, 9, 10],
-      supportedContainers: [1, 2, 3],
-      area: [1000, 1099],
-      pickUpSlots: [
-        {
-          day: 'monday',
-          hours: ['10:00', '12:00'],
-        },
-        {
-          day: 'monday',
-          hours: ['18:00', '20:00'],
-        },
-      ],
-      _created: new Date(),
-      _modified: new Date(),
-    } as LogisticProviderDocument,
+      day: 'monday',
+      hours: ['10:00', '12:00'],
+    },
+    {
+      day: 'monday',
+      hours: ['18:00', '20:00'],
+    },
   ],
-} as StreamAggregate;
+  stream: {
+    _id: '62ee48f34dd6ed8201a17592',
+    ...stream,
+  },
+  _created: new Date('2020-07-30T09:28:34.876Z'),
+  _modified: new Date('2022-07-22T13:56:43.161Z'),
+} as any as LogisticProviderAggregate;
 
 const streamWithPickUps: StreamWithPickUps = {
   ...stream,
@@ -86,19 +87,38 @@ const streamWithPickUps: StreamWithPickUps = {
 
 describe('StreamsService', () => {
   let service: StreamsService;
-  let model: Model<Stream>;
+  let streamModel: Model<Stream>;
+  let logisticProviderModel: Model<LogisticProvider>;
+
+  const aggregateQuery = {
+    lookup: jest.fn(),
+    unwind: jest.fn(),
+    project: jest.fn(),
+    match: jest.fn(),
+    exec: jest.fn(),
+  };
 
   beforeEach(async () => {
+    aggregateQuery.lookup.mockReturnThis();
+    aggregateQuery.unwind.mockReturnThis();
+    aggregateQuery.project.mockReturnThis();
+    aggregateQuery.match.mockReturnThis();
+    aggregateQuery.exec.mockResolvedValueOnce([logisticProviderAggregate]);
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         StreamsService,
         {
           provide: getModelToken('Stream'),
           useValue: {
-            new: jest.fn().mockResolvedValue(stream),
-            constructor: jest.fn().mockResolvedValue(stream),
             find: jest.fn(),
-            aggregate: jest.fn(),
+            exec: jest.fn(),
+          },
+        },
+        {
+          provide: getModelToken('LogisticProvider'),
+          useValue: {
+            aggregate: jest.fn().mockReturnValue(aggregateQuery),
             exec: jest.fn(),
           },
         },
@@ -106,7 +126,8 @@ describe('StreamsService', () => {
     }).compile();
 
     service = module.get<StreamsService>(StreamsService);
-    model = module.get<Model<Stream>>(getModelToken('Stream'));
+    streamModel = module.get<Model<Stream>>(getModelToken('Stream'));
+    logisticProviderModel = module.get<Model<LogisticProvider>>(getModelToken('LogisticProvider'));
   });
 
   afterEach(() => {
@@ -118,87 +139,59 @@ describe('StreamsService', () => {
       exec: jest.fn().mockResolvedValueOnce([stream]),
     };
 
-    (model.find as jest.Mock).mockReturnValue(query);
+    (streamModel.find as jest.Mock).mockReturnValue(query);
 
     const actual = await service.findAll();
 
     expect(actual).toEqual([stream]);
-    expect(model.find).toHaveBeenCalled();
+    expect(streamModel.find).toHaveBeenCalled();
     expect(query.exec).toHaveBeenCalled();
   });
 
-  it('should aggregate all Streams with the related LogisticProviders', async () => {
-    const aggregate = {
-      lookup: jest.fn().mockReturnThis(),
-      exec: jest.fn().mockResolvedValueOnce([streamAggregate]),
-    };
-
-    (model.aggregate as jest.Mock).mockReturnValue(aggregate);
-
-    const actual = await service.pickUps();
+  it('should aggregate all LogisticProvider with the related Streams', async () => {
+    const actual = await service.availableForPickUp();
 
     expect(actual).toEqual([streamWithPickUps]);
-    expect(aggregate.lookup).toHaveBeenCalledWith({
-      from: 'logisticProviders',
-      localField: 'streamProductId',
-      foreignField: 'supportedStreams',
-      as: 'logisticProviders',
+    expect(logisticProviderModel.aggregate).toHaveBeenCalled();
+    expect(aggregateQuery.lookup).toHaveBeenCalledWith({
+      from: 'streams',
+      localField: 'supportedStreams',
+      foreignField: 'streamProductId',
+      as: 'streams',
     });
-    expect(aggregate.exec).toHaveBeenCalled();
+    expect(aggregateQuery.unwind).toHaveBeenCalledWith({
+      path: '$streams',
+    });
+    expect(aggregateQuery.project).toHaveBeenCalledWith({
+      name: 1,
+      pickUpSlots: 1,
+      stream: '$streams',
+      area: 1,
+    });
+    expect(aggregateQuery.exec).toHaveBeenCalled();
   });
 
-  it('should aggregate all Streams with the related LogisticProviders and match only the one in specified area', async () => {
-    const aggregate = {
-      lookup: jest.fn().mockReturnThis(),
-      match: jest.fn().mockReturnThis(),
-      exec: jest.fn().mockResolvedValueOnce([streamAggregate]),
-    };
-
-    (model.aggregate as jest.Mock).mockReturnValue(aggregate);
-
+  it('should aggregate all LogisticProvider with the related Streams, and match only the one in specified area', async () => {
     const postalcode = 1000;
-    const actual = await service.pickUps(postalcode);
+    const actual = await service.availableForPickUp(postalcode);
 
     expect(actual).toEqual([streamWithPickUps]);
-    expect(aggregate.lookup).toHaveBeenCalledWith({
-      from: 'logisticProviders',
-      localField: 'streamProductId',
-      foreignField: 'supportedStreams',
-      as: 'logisticProviders',
+    expect(aggregateQuery.match).toHaveBeenCalledWith({
+      $and: [{ 'area.0': { $lte: postalcode } }, { 'area.1': { $gte: postalcode } }],
     });
-    expect(aggregate.match).toHaveBeenCalledWith({
-      $and: [
-        { 'logisticProviders.area.0': { $lte: postalcode } },
-        { 'logisticProviders.area.1': { $gte: postalcode } },
-      ],
-    });
-    expect(aggregate.exec).toHaveBeenCalled();
+    expect(aggregateQuery.exec).toHaveBeenCalled();
   });
 
   it('should aggregate all Streams with the related LogisticProviders and match only the one with the given pickUp weekdays', async () => {
-    const aggregate = {
-      lookup: jest.fn().mockReturnThis(),
-      match: jest.fn().mockReturnThis(),
-      exec: jest.fn().mockResolvedValueOnce([streamAggregate]),
-    };
-
-    (model.aggregate as jest.Mock).mockReturnValue(aggregate);
-
     const weekdays = ['monday', 'friday'];
-    const actual = await service.pickUps(undefined, weekdays);
+    const actual = await service.availableForPickUp(undefined, weekdays);
 
     expect(actual).toEqual([streamWithPickUps]);
-    expect(aggregate.lookup).toHaveBeenCalledWith({
-      from: 'logisticProviders',
-      localField: 'streamProductId',
-      foreignField: 'supportedStreams',
-      as: 'logisticProviders',
-    });
-    expect(aggregate.match).toHaveBeenCalledWith({
-      'logisticProviders.pickUpSlots.day': {
+    expect(aggregateQuery.match).toHaveBeenCalledWith({
+      'pickUpSlots.day': {
         $in: weekdays,
       },
     });
-    expect(aggregate.exec).toHaveBeenCalled();
+    expect(aggregateQuery.exec).toHaveBeenCalled();
   });
 });

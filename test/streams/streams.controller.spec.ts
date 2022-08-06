@@ -69,7 +69,7 @@ describe('StreamsController', () => {
           provide: StreamsService,
           useValue: {
             findAll: jest.fn().mockResolvedValue([stream]),
-            pickUps: jest.fn().mockResolvedValue([streamWithPickUps]),
+            availableForPickUp: jest.fn().mockResolvedValue([streamWithPickUps]),
           },
         },
       ],
@@ -90,14 +90,14 @@ describe('StreamsController', () => {
     expect(actual).toEqual([stream]);
   });
 
-  it('should return a list of Streams with the related PickUp slots', async () => {
+  it('should return a list of Streams available for pick up', async () => {
     const query = new PickUpQuery();
     query.postalcode = 1000;
     query.weekdays = ['monday', 'tuesday'];
 
     const actual = await controller.pickUps(query);
 
-    expect(service.pickUps).toHaveBeenCalledWith(query.postalcode, query.weekdays);
+    expect(service.availableForPickUp).toHaveBeenCalledWith(query.postalcode, query.weekdays);
     expect(actual).toEqual([streamWithPickUps]);
   });
 });
