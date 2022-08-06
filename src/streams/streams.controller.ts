@@ -1,13 +1,19 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
+import { PickUpQuery } from './dto/pickup-query';
 import { Stream } from './schema/stream.schema';
 import { StreamsService } from './streams.service';
 
 @Controller('streams')
 export class StreamsController {
-  constructor(private streamsService: StreamsService) {}
+  constructor(private streamsService: StreamsService) { }
 
   @Get()
   async findAll(): Promise<Stream[]> {
-   return  this.streamsService.findAll();
+    return this.streamsService.findAll();
+  }
+
+  @Get('pickups')
+  async pickUps(@Query() query: PickUpQuery): Promise<any> {
+    return this.streamsService.pickUps(query.postalcode, query.weekdays);
   }
 }

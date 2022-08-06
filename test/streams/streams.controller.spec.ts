@@ -1,4 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { PickUpQuery } from '../../src/streams/dto/pickup-query';
+import { StreamWithPickUps } from '../../src/streams/dto/stream-with-pickups';
 import { Stream } from '../../src/streams/schema/stream.schema';
 import { StreamsController } from '../../src/streams/streams.controller';
 import { StreamsService } from '../../src/streams/streams.service';
@@ -35,6 +37,27 @@ const stream: Stream = {
   _modified: new Date('2022-07-22T13:56:43.161Z'),
 };
 
+const streamWithPickUps: StreamWithPickUps = {
+  ...stream,
+  _id: '62ee48f34dd6ed8201a17592',
+  pickUpSlots: [
+    {
+      logisticProviderId:  '62ee48f34dd6ed8201a175c7',
+      logisticProvider: 'GreenCollect',
+      area: [1000, 1099],
+      day: 'monday',
+      hours: ['10:00', '12:00'],
+    },
+    {
+      logisticProviderId: '62ee48f34dd6ed8201a175c7',
+      logisticProvider: 'GreenCollect',
+      area: [1000, 1099],
+      day: 'monday',
+      hours: ['18:00', '20:00'],
+    },
+  ],
+};
+
 describe('StreamsController', () => {
   let controller: StreamsController;
   let service: StreamsService;
@@ -47,6 +70,7 @@ describe('StreamsController', () => {
           provide: StreamsService,
           useValue: {
             findAll: jest.fn().mockResolvedValue([stream]),
+            pickUps: jest.fn().mockResolvedValue([streamWithPickUps]),
           },
         },
       ],
@@ -65,5 +89,16 @@ describe('StreamsController', () => {
 
     expect(service.findAll).toHaveBeenCalled();
     expect(actual).toEqual([stream]);
+  });
+
+  it('should return a list of Streams with the related PickUp slots', async () => {
+    const query = new PickUpQuery();
+    query.postalcode = 1000;
+    query.weekdays = ['monday', 'tuesday'];
+
+    const actual = await controller.pickUps(query);
+
+    expect(service.pickUps).toHaveBeenCalledWith(query.postalcode, query.weekdays);
+    expect(actual).toEqual([streamWithPickUps]);
   });
 });
