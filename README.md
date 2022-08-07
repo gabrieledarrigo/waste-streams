@@ -1,7 +1,7 @@
 # Waste Streams API
+[![Build](https://github.com/gabrieledarrigo/waste-streams/actions/workflows/build.yml/badge.svg)](https://github.com/gabrieledarrigo/waste-streams/actions/workflows/build.yml)
 
-
-## Running the app
+## Running the application
 
 First, install all application dependencies:
 
@@ -28,4 +28,10 @@ To run application's unit tests, run the following command:
 
 ```bash
 $ npm run test
+```
+
+To run application's e2e tests, run the following command:
+
+```bash
+$ npm run test:e2e
 ```
