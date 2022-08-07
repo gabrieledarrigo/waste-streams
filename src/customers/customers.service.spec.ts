@@ -1,17 +1,9 @@
 import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Model } from 'mongoose';
+import { customers } from '../../test/fixtures';
 import { CustomersService } from './customers.service';
 import { Customer } from './schema/customer.schema';
-
-const customer = {
-  name: 'John Doe',
-  email: 'john.doe@example.com',
-  locality: 'Amsterdam',
-  postalCode: '1012',
-  _created: new Date(),
-  _modified: new Date(),
-} as any as Customer;
 
 describe('CustomersService', () => {
   let service: CustomersService;
@@ -41,14 +33,14 @@ describe('CustomersService', () => {
 
   it('should return all Customers', async () => {
     const query = {
-      exec: jest.fn().mockResolvedValueOnce([customer]),
+      exec: jest.fn().mockResolvedValueOnce(customers),
     };
 
     (model.find as jest.Mock).mockReturnValue(query);
 
     const actual = await service.findAll();
 
-    expect(actual).toEqual([customer]);
+    expect(actual).toEqual(customers);
     expect(model.find).toHaveBeenCalled();
     expect(query.exec).toHaveBeenCalled();
   });

@@ -1,34 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { logisticProviders } from '../../test/fixtures';
 import { LogisticProvidersController } from './logistic-providers.controller';
 import { LogisticProvidersService } from './logistic-providers.service';
-import { LogisticProvider } from './schema/logistic-providers.schema';
-
-const logisticProvider: LogisticProvider = {
-  name: 'Retransport',
-  supportedStreams: [2, 3],
-  supportedContainers: [4, 5, 6, 7],
-  area: [1500, 2000],
-  pickUpSlots: [
-    {
-      day: 'monday',
-      hours: ['10:00', '12:00'],
-    },
-    {
-      day: 'tuesday',
-      hours: ['18:00', '20:00'],
-    },
-    {
-      day: 'thursday',
-      hours: ['14:00', '16:00'],
-    },
-    {
-      day: 'friday',
-      hours: ['10:00', '12:00'],
-    },
-  ],
-  _created: new Date(),
-  _modified: new Date(),
-};
 
 describe('LogisticProvidersController', () => {
   let controller: LogisticProvidersController;
@@ -41,7 +14,7 @@ describe('LogisticProvidersController', () => {
         {
           provide: LogisticProvidersService,
           useValue: {
-            findAll: jest.fn().mockResolvedValue([logisticProvider]),
+            findAll: jest.fn().mockResolvedValue(logisticProviders),
           },
         },
       ],
@@ -59,6 +32,6 @@ describe('LogisticProvidersController', () => {
     const actual = await controller.findAll();
 
     expect(service.findAll).toHaveBeenCalled();
-    expect(actual).toEqual([logisticProvider]);
+    expect(actual).toEqual(logisticProviders);
   });
 });

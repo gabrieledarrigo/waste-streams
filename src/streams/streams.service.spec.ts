@@ -1,87 +1,20 @@
 import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Model } from 'mongoose';
+import { logisticProviders, streams, streamsWithPickups } from '../../test/fixtures';
 import { LogisticProviderAggregate, LogisticProvider } from '../logistic-providers/schema/logistic-providers.schema';
-import { StreamWithPickUps } from './dto/stream-with-pickups';
 import { Stream } from './schema/stream.schema';
 import { StreamsService } from './streams.service';
 
-const stream = {
-  _id: '62ee48f34dd6ed8201a17592',
-  type: 'piepschuim',
-  streamProductId: 11,
-  image: 'https://d39t4x71zbx2q8.cloudfront.net/streams/v2/PIEPSCHUIM.png',
-  detailsURL: 'https://seenons.com/piepschuim/',
-  textColor: '#000000',
-  backgroundColor: '#D1C4C4',
-  name: {
-    'en-gb': 'Styrofoam',
-  },
-  description: {
-    'en-gb': 'Styrofoam',
-  },
-  sizes: [
-    {
-      id: 18,
-      size: 1000,
-      image: 'https://d39t4x71zbx2q8.cloudfront.net/containers/Seenons-Piepschuim.png',
-      sizeDisplay: '1m3',
-      containerProductId: 32,
-      discountPercentage: 0,
-      unitPricePickup: 0,
-      unitPriceRent: 0,
-      unitPricePlacement: 0,
-    },
-  ],
-  _active: true,
-  _created: new Date('2020-07-30T09:28:34.876Z'),
-  _modified: new Date('2022-07-22T13:56:43.161Z'),
-} as any as Stream;
-
+const [stream] = streams;
+const [logisticProvider] = logisticProviders;
+const [streamWithPickUps] = streamsWithPickups;
 const logisticProviderAggregate = {
-  _id: '62ee48f34dd6ed8201a175c7',
-  name: 'GreenCollect',
-  supportedStreams: [6, 7, 9, 10],
-  supportedContainers: [1, 2, 3],
-  area: [1000, 1099],
-  pickUpSlots: [
-    {
-      day: 'monday',
-      hours: ['10:00', '12:00'],
-    },
-    {
-      day: 'monday',
-      hours: ['18:00', '20:00'],
-    },
-  ],
+ ...logisticProvider,
   stream: {
-    _id: '62ee48f34dd6ed8201a17592',
     ...stream,
   },
-  _created: new Date('2020-07-30T09:28:34.876Z'),
-  _modified: new Date('2022-07-22T13:56:43.161Z'),
 } as any as LogisticProviderAggregate;
-
-const streamWithPickUps: StreamWithPickUps = {
-  ...stream,
-  _id: '62ee48f34dd6ed8201a17592',
-  pickUpSlots: [
-    {
-      logisticProviderId: '62ee48f34dd6ed8201a175c7',
-      logisticProvider: 'GreenCollect',
-      area: [1000, 1099],
-      day: 'monday',
-      hours: ['10:00', '12:00'],
-    },
-    {
-      logisticProviderId: '62ee48f34dd6ed8201a175c7',
-      logisticProvider: 'GreenCollect',
-      area: [1000, 1099],
-      day: 'monday',
-      hours: ['18:00', '20:00'],
-    },
-  ],
-};
 
 describe('StreamsService', () => {
   let service: StreamsService;
@@ -134,14 +67,14 @@ describe('StreamsService', () => {
 
   it('should return all Streams', async () => {
     const query = {
-      exec: jest.fn().mockResolvedValueOnce([stream]),
+      exec: jest.fn().mockResolvedValueOnce(streams),
     };
 
     (streamModel.find as jest.Mock).mockReturnValue(query);
 
     const actual = await service.findAll();
 
-    expect(actual).toEqual([stream]);
+    expect(actual).toEqual(streams);
     expect(streamModel.find).toHaveBeenCalled();
     expect(query.exec).toHaveBeenCalled();
   });

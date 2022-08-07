@@ -1,16 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { customers } from '../../test/fixtures';
 import { CustomersController } from './customers.controller';
 import { CustomersService } from './customers.service';
-import { Customer } from './schema/customer.schema';
-
-const customer = {
-  name: 'John Doe',
-  email: 'john.doe@example.com',
-  locality: 'Amsterdam',
-  postalCode: '1012',
-  _created: new Date(),
-  _modified: new Date(),
-} as any as Customer;
 
 describe('CustomersController', () => {
   let controller: CustomersController;
@@ -23,7 +14,7 @@ describe('CustomersController', () => {
         {
           provide: CustomersService,
           useValue: {
-            findAll: jest.fn().mockResolvedValue([customer]),
+            findAll: jest.fn().mockResolvedValue(customers),
           },
         },
       ],
@@ -41,6 +32,6 @@ describe('CustomersController', () => {
     const actual = await controller.findAll();
 
     expect(service.findAll).toHaveBeenCalled();
-    expect(actual).toEqual([customer]);
+    expect(actual).toEqual(customers);
   });
 });
