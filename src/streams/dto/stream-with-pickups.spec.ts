@@ -1,5 +1,5 @@
-import { LogisticProviderAggregate } from '../../../src/logistic-providers/schema/logistic-providers.schema';
-import { StreamWithPickUps } from '../../../src/streams/dto/stream-with-pickups';
+import { LogisticProviderAggregate } from '../../logistic-providers/schema/logistic-providers.schema';
+import { StreamWithPickUps } from './stream-with-pickups';
 
 const aggregate = {
   _id: '62ee48f34dd6ed8201a175c7',

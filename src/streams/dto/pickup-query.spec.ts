@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { validateSync, ValidationError } from 'class-validator';
 import { PickUpQuery } from './pickup-query';
 
