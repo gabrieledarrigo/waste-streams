@@ -41,7 +41,7 @@ describe('Streams', () => {
       .expect('Content-Type', /json/)
       .expect(streams));
 
-  it(`/GET streams`, () =>
+  it(`/GET streams/pickups`, () =>
     request(app.getHttpServer())
       .get('/streams/pickups')
       .expect(200)

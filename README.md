@@ -3,14 +3,14 @@
 
 ## Running the application
 
-Waste Streams APIs use a dockerized instance of MongoDB for its persistence layer.
 To run Waste Streams APIs first, install all application dependencies:  
 
 ```bash
 $ npm install
 ```
 
-Then, run the Docker container for MongoDB:
+Waste Streams APIs use a dockerized instance of MongoDB for its persistence layer.  
+So, first run the Docker container for MongoDB:
 
 ```bash
 $ docker compose up
@@ -19,7 +19,7 @@ $ docker compose up
 Finally, run one of the following commands to lunch the application:  
 
 ```bash
-# dDevelopment
+# Development
 $ npm run start
 
 # Watch mode
@@ -47,13 +47,11 @@ $ npm run test:e2e
 
 Waste Streams APIs exposes three types of resources: `Stream`, `StreamWithPickUps`, `LogisticProvider`, and `Customer`.
 
-### GET /stream
+### GET /streams
 
 Returns all the available waste `Streams`.
 
 ```json
-GET / streams
-
 [
   {
     "_id": "62efbcd0e5b3d7ed906afda3",
@@ -88,7 +86,6 @@ GET / streams
       "unitPricePickup": 3.75,
       "unitPriceRent": null,
       "unitPricePlacement": 2.5
-    }
     }]
   },
   ...
@@ -100,14 +97,12 @@ GET / streams
 It returns a list of all the waste streams available for pickups (`StreamWithPickUps`).  
 Every `Stream` reports an array of pickup slots, each one reporting:
 
-- The LogisticProvider responsible for the pickup
+- The `LogisticProvider` responsible for the pickup
 - The area eligible for the pickup
 - The day of the pickup
 - The time range for the pickup
 
 ```json
-GET /streams/pickups
-
 [
   {
     "_id": "62efbcd0e5b3d7ed906afda4",
@@ -185,20 +180,18 @@ Or for specific `weekdays`:
 GET /streams/pickups?weekdays[]=monday
 ```
 
-Weekdays can be expressed in the human form (monday, tuesday, wednesday, etc.) or by specifying an ordinal suffix: `-1st`, `-2nd`, `-3rd`, `-4th`.
+Weekdays can be expressed in the human form (`monday`, `tuesday`, `wednesday`, etc.) or by specifying an ordinal suffix: `-1st`, `-2nd`, `-3rd`, `-4th`.  
 For example: `friday-2nd` means: *every second Friday of the month*.
 
 ### GET /logistic-providers
 
-It returns a list of all `LogisticProvider` responsible for picking up a set of waste Streams.
-Each LogisticProvider reports:
+It returns a list of all `LogisticProvider` responsible for picking up a set of waste `Streams`.
+Each `LogisticProvider` reports:
 
 - The ids of the supported waste `Streams`
 - The days and hours of the pickup
 
 ```json
-GET /logistic-providers
-
 [
   {
     "_id": "62efbcd0e5b3d7ed906afddf",
@@ -228,11 +221,9 @@ GET /logistic-providers
 
 ### GET /customers
 
-It returns a list of all application's Customers.
+It returns a list of all application's `Customers`.
 
 ```json
-GET /customers
-
 [
   {
     "_id": "62efbcd0e5b3d7ed906afddb",
